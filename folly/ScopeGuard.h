@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <functional>
+#include <iostream>
 #include <new>
 #include <type_traits>
 #include <utility>
@@ -42,7 +43,13 @@ class ScopeGuardImplBase {
  protected:
   ScopeGuardImplBase() noexcept : dismissed_(false) {}
 
-  static void warnAboutToCrash() noexcept;
+  static void warnAboutToCrash() noexcept {
+    // Ensure the availability of std::cerr
+    std::ios_base::Init ioInit;
+    std::cerr
+        << "This program will now terminate because a folly::ScopeGuard callback "
+           "threw an \nexception.\n";
+  }
   static ScopeGuardImplBase makeEmptyScopeGuard() noexcept {
     return ScopeGuardImplBase{};
   }
